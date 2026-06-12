@@ -7,7 +7,7 @@ from utils.text_utils import (clean_file_name,
                             clean_directory_name)
 
 def _resolve_config(config_path: Path, key_config: str,
-                    config_value: list | None) -> list | any:
+                    config_value: list | None) -> list | None:
 
     if config_value is not None:
         return config_value
