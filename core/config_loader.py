@@ -4,7 +4,7 @@ from pathlib import Path
 
 _CONFIG_CACHE: dict[str, dict] = {}
 
-def get_cached_config_value(config_path: Path, key: str) -> list | str | any:
+def get_cached_config_value(config_path: Path, key: str)-> str | None:
     path_str: str = str(config_path)
 
     if path_str not in _CONFIG_CACHE:
