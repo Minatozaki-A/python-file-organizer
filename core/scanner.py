@@ -5,7 +5,7 @@ from core.config_loader import (get_cached_config_value,
 from utils.text_utils import clean_directory_name
 
 
-def scanner_structure_directories(base_path: Path, config_path: Path = None, structure_path: Path = None):
+def scanner_structure_directories(base_path: Path, config_path: Path | None = None, structure_path: Path | None = None) -> None:
     if not base_path.exists() or not base_path.is_dir():
         raise FileNotFoundError(f"La ruta no existe o no es un directorio: {base_path}")
 
@@ -15,10 +15,9 @@ def scanner_structure_directories(base_path: Path, config_path: Path = None, str
         if cached_ignore:
             ignore_dir = cached_ignore
 
-    final_structure = {
+    final_structure: dict[str, dict] = {
             clean_directory_name(base_path): build_directory_tree(base_path, ignore_dir)
     }
 
     if config_path:
         save_structure_directories(structure_path, final_structure)
-

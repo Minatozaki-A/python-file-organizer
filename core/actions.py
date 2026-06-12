@@ -7,7 +7,7 @@ from utils.text_utils import (clean_file_name,
                             clean_directory_name)
 
 def _resolve_config(config_path: Path, key_config: str,
-                    config_value: list | None) -> list:
+                    config_value: list | None) -> list | any:
 
     if config_value is not None:
         return config_value
@@ -28,21 +28,21 @@ def _unique_path(base_path: Path)-> Path | None:
         return base_path
     stem, suffix = base_path.stem, base_path.suffix
     for n in count(1):
-        candidate = base_path.parent / f"{stem}({n}){suffix}"
+        candidate: Path = base_path.parent / f"{stem}({n}){suffix}"
         if not candidate.exists():
             return candidate
     return None
 
 
-def find_ssd_mount_point(label_ssd: str = None)-> Path | None:
+def find_ssd_mount_point(label_ssd: str | None)-> Path | None:
     if not label_ssd:
         raise ValueError("label_ssd is empty")
 
     for part in psutil.disk_partitions():
-        mount_point = part.mountpoint.rstrip('/')
+        mount_point: str = part.mountpoint.rstrip('/')
         if mount_point.endswith(label_ssd):
             logging.info("SSD found — device: %s | mount point: %s | filesystem: %s",
-                         part.device, part.mountpoint, part.fstype)
+                        part.device, part.mountpoint, part.fstype)
             return Path(part.mountpoint)
     return None
 
@@ -69,14 +69,14 @@ def resolve_name_path(base_path: Path) -> Path | None:
     new_name = ""
 
     if base_path.is_dir():
-        new_name = clean_directory_name(base_path)
+        new_name: str = clean_directory_name(base_path)
     elif base_path.is_file():
-        new_name = clean_file_name(base_path)
+        new_name: str = clean_file_name(base_path)
 
     if not new_name:
         raise ValueError(f"new name is empty: {base_path}")
 
-    final_name = base_path.parent / new_name
+    final_name: Path = base_path.parent / new_name
 
     if  final_name.name == base_path.name:
         return final_name
@@ -92,9 +92,9 @@ def organize_for_depth_and_alphabetical(list_items)-> list:
 
 
 def get_name_files(source_path: Path, config_path: Path,
-                key: str, config_value: list = None):
+                key: str, config_value: list | None = None):
 
-    ignore_dir = _resolve_config(config_path, key, config_value)
+    ignore_dir: list[str] = _resolve_config(config_path, key, config_value)
 
     try:
         for item in source_path.iterdir():
@@ -113,9 +113,9 @@ def get_name_files(source_path: Path, config_path: Path,
 
 
 def get_name_directories(source_path: Path, config_path: Path,
-                        key: str, config_value: list = None):
+                        key: str, config_value: list | None = None):
 
-    ignore_dir = _resolve_config(config_path,
+    ignore_dir: list[str] = _resolve_config(config_path,
                                 key, config_value)
     try:
         for item in source_path.iterdir():
@@ -131,10 +131,10 @@ def get_name_directories(source_path: Path, config_path: Path,
     except PermissionError:
         logging.error("Permission denied — cannot read directory contents: %s", source_path)
 
-def rename_files_and_directories(list_items: list, is_dry_run: bool):
+def rename_files_and_directories(list_items: list, is_dry_run: bool) -> None:
     for item in list_items:
         try:
-            new_path_file = resolve_name_path(item)
+            new_path_file: Path | None = resolve_name_path(item)
             if new_path_file and new_path_file != item:
                 if is_dry_run:
                     logging.info("[DRY RUN] Would rename: %s -> %s", item.name, new_path_file.name)

@@ -1,12 +1,11 @@
 import json
 import logging
 from pathlib import Path
-from typing import Dict
 
-_CONFIG_CACHE: Dict[str, Dict] = {}
+_CONFIG_CACHE: dict[str, dict] = {}
 
-def get_cached_config_value(config_path: Path, key: str):
-    path_str = str(config_path)
+def get_cached_config_value(config_path: Path, key: str) -> list | str | any:
+    path_str: str = str(config_path)
 
     if path_str not in _CONFIG_CACHE:
         if not config_path.exists():
@@ -27,8 +26,8 @@ def get_cached_config_value(config_path: Path, key: str):
     return _CONFIG_CACHE[path_str].get(key)
 
 
-def build_directory_tree(base_path: Path, ignore_list: list) -> dict:
-    tree = {}
+def build_directory_tree(base_path: Path, ignore_list: list[str]) -> dict[str, dict | None]:
+    tree: dict[str, dict | None] = {}
     try:
         for item in base_path.iterdir():
             if item.name in ignore_list:
@@ -46,8 +45,8 @@ def build_directory_tree(base_path: Path, ignore_list: list) -> dict:
     return tree
 
 
-def save_structure_directories(config_path: Path, new_structure: dict):
-    structure_data = {}
+def save_structure_directories(config_path: Path | None, new_structure: dict) -> None:
+    structure_data: dict = {}
 
     if config_path and config_path.exists():
         with open(config_path, 'r', encoding='utf-8') as f:

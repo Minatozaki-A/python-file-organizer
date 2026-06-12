@@ -18,8 +18,8 @@ def clean_name(name : str) -> str:
     Returns:
         str: El nombre limpio, normalizado y formateado con guiones.
 """
-    clean = udd.normalize('NFKD', name)
-    without_accents = "".join(c for c in clean if udd.category(c) != 'Mn')
+    clean: str = udd.normalize('NFKD', name)
+    without_accents: str = "".join(c for c in clean if udd.category(c) != 'Mn')
 
     clean = re.sub(r'copy-of', '', without_accents, flags=re.IGNORECASE)
 
@@ -27,7 +27,7 @@ def clean_name(name : str) -> str:
 
     clean = re.sub(r'\s+', ' ', clean).lower().strip()
 
-    final_name = re.sub(r'[\s_-]+', '-', clean)
+    final_name: str = re.sub(r'[\s_-]+', '-', clean)
     return final_name
 
 def clean_file_name(path_file: Path) -> str:
@@ -39,10 +39,10 @@ def clean_file_name(path_file: Path) -> str:
     Returns:
         str: El nuevo nombre de archivo limpio con su extensión original.
     """
-    name = path_file.stem
-    ext = path_file.suffix.lower()
+    name: str = path_file.stem
+    ext: str = path_file.suffix.lower()
 
-    final_name = clean_name(name)
+    final_name: str = clean_name(name)
 
     return f"{final_name}{ext}"
 
@@ -55,7 +55,7 @@ def clean_directory_name(path_dir: Path) -> str:
     Returns:
         str: El nuevo nombre de directorio limpio.
     """
-    name = path_dir.name
-    title = re.sub(r'^\d+[\s.\-]+', '', name).strip()
-    cleaned_title = clean_name(title)
+    name: str = path_dir.name
+    title: str = re.sub(r'^\d+[\s.\-]+', '', name).strip()
+    cleaned_title: str = clean_name(title)
     return cleaned_title
